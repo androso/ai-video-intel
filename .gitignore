@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Virtual environments
+.venv/
+venv/
+
+# Node/Bun
+node_modules/
+bun.lockb
+dist/
+*.tsbuildinfo
+
+# Env files
+.env
+.env.local
+
+# OS/Editor
+.DS_Store
+.vscode/

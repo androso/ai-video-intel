@@ -1,0 +1,31 @@
+[project]
+name = "ai-video-intel-backend"
+version = "0.1.0"
+description = "Backend scaffold for AI Video Intelligence Platform"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.116.0,<1.0.0",
+  "uvicorn[standard]>=0.35.0,<1.0.0",
+  "pydantic-settings>=2.10.0,<3.0.0",
+  "sqlalchemy>=2.0.43,<3.0.0",
+  "alembic>=1.16.4,<2.0.0",
+  "psycopg[binary]>=3.2.9,<4.0.0",
+  "redis>=6.4.0,<7.0.0",
+  "celery>=5.5.3,<6.0.0",
+  "python-multipart>=0.0.20,<1.0.0",
+  "httpx>=0.28.1,<1.0.0",
+  "openai>=1.102.0,<2.0.0",
+  "google-cloud-storage>=3.3.0,<4.0.0",
+  "google-cloud-bigquery>=3.37.0,<4.0.0",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.12.10,<1.0.0",
+  "pytest>=8.4.1,<9.0.0",
+  "pytest-asyncio>=1.1.0,<2.0.0",
+  "mypy>=1.17.1,<2.0.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
