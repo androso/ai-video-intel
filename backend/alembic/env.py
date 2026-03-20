@@ -1,4 +1,5 @@
 import os
+
 from alembic import context
 
 config = context.config
