@@ -1,23 +1,24 @@
-from app.db.session import Base
-from datetime import datetime
 import uuid
-from sqlalchemy.dialects.postgresql import UUID, JSONB, TSVECTOR
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime
+
 from sqlalchemy import (
-    Text,
-    String,
     BigInteger,
-    SmallInteger,
     Computed,
-    Numeric,
     DateTime,
     ForeignKey,
-    UniqueConstraint,
     Index,
-    Integer
+    Integer,
+    Numeric,
+    SmallInteger,
+    String,
+    Text,
+    UniqueConstraint,
 )
+from sqlalchemy.dialects.postgresql import JSONB, TSVECTOR, UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.enums import AssetStatus, JobStatus, StepStatus, InsightType
+from app.db.session import Base
+from app.models.enums import AssetStatus, InsightType, JobStatus, StepStatus
 
 # ---------------------
 # VIDEO ASSETS

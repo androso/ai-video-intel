@@ -1,12 +1,12 @@
-from app.models.enums import AssetStatus, JobStatus, StepStatus, InsightType
+from app.models.enums import AssetStatus, InsightType, JobStatus, StepStatus
 from app.models.models import (
-    VideoAsset,
-    ProcessingJob,
-    JobStep,
-    TranscriptSegment,
-    InsightSegment,
-    VideoSummary,
     AnalyticsEvent,
+    InsightSegment,
+    JobStep,
+    ProcessingJob,
+    TranscriptSegment,
+    VideoAsset,
+    VideoSummary,
 )
 
 __all__ = [

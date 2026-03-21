@@ -5,17 +5,18 @@ Revises:
 Create Date: 2026-03-20 19:00:23.834540
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+from alembic import op
+
 # revision identifiers, used by Alembic.
 revision: str = '0384ae4e26a2'
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -26,7 +27,11 @@ def upgrade() -> None:
     sa.Column('original_storage_path', sa.String(length=1000), nullable=False),
     sa.Column('normalized_storage_path', sa.String(length=1000), nullable=True),
     sa.Column('thumbnail_path', sa.String(length=1000), nullable=True),
-    sa.Column('status', sa.Enum('UPLOADED', 'PROCESSING', 'READY', 'FAILED', name='assetstatus'), nullable=False),
+    sa.Column(
+        'status',
+        sa.Enum('UPLOADED', 'PROCESSING', 'READY', 'FAILED', name='assetstatus'),
+        nullable=False,
+    ),
     sa.Column('mime_type', sa.String(length=100), nullable=False),
     sa.Column('file_size_bytes', sa.BigInteger(), nullable=False),
     sa.Column('duration_seconds', sa.Numeric(precision=10, scale=3), nullable=True),
@@ -44,11 +49,20 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['asset_id'], ['video_assets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index('ix_analytics_events_type_created', 'analytics_events', ['event_type', 'created_at'], unique=False)
+    op.create_index(
+        'ix_analytics_events_type_created',
+        'analytics_events',
+        ['event_type', 'created_at'],
+        unique=False,
+    )
     op.create_table('insight_segments',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('asset_id', sa.UUID(), nullable=False),
-    sa.Column('insight_type', sa.Enum('SENTIMENT', 'TOPIC', 'HIGHLIGHT', 'CHAPTER', name='insighttype'), nullable=False),
+    sa.Column(
+        'insight_type',
+        sa.Enum('SENTIMENT', 'TOPIC', 'HIGHLIGHT', 'CHAPTER', name='insighttype'),
+        nullable=False,
+    ),
     sa.Column('start_time', sa.Numeric(precision=10, scale=3), nullable=False),
     sa.Column('end_time', sa.Numeric(precision=10, scale=3), nullable=False),
     sa.Column('result', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
@@ -59,12 +73,26 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['asset_id'], ['video_assets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index('ix_insight_segments_asset_start', 'insight_segments', ['asset_id', 'start_time'], unique=False)
-    op.create_index('ix_insight_segments_asset_type', 'insight_segments', ['asset_id', 'insight_type'], unique=False)
+    op.create_index(
+        'ix_insight_segments_asset_start',
+        'insight_segments',
+        ['asset_id', 'start_time'],
+        unique=False,
+    )
+    op.create_index(
+        'ix_insight_segments_asset_type',
+        'insight_segments',
+        ['asset_id', 'insight_type'],
+        unique=False,
+    )
     op.create_table('processing_jobs',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('asset_id', sa.UUID(), nullable=False),
-    sa.Column('status', sa.Enum('QUEUED', 'PROCESSING', 'COMPLETED', 'FAILED', name='jobstatus'), nullable=False),
+    sa.Column(
+        'status',
+        sa.Enum('QUEUED', 'PROCESSING', 'COMPLETED', 'FAILED', name='jobstatus'),
+        nullable=False,
+    ),
     sa.Column('started_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default='now()', nullable=False),
@@ -72,7 +100,12 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['asset_id'], ['video_assets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_processing_jobs_asset_id'), 'processing_jobs', ['asset_id'], unique=False)
+    op.create_index(
+        op.f('ix_processing_jobs_asset_id'),
+        'processing_jobs',
+        ['asset_id'],
+        unique=False,
+    )
     op.create_table('transcript_segments',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('asset_id', sa.UUID(), nullable=False),
@@ -80,15 +113,31 @@ def upgrade() -> None:
     sa.Column('start_time', sa.Numeric(precision=10, scale=3), nullable=False),
     sa.Column('end_time', sa.Numeric(precision=10, scale=3), nullable=False),
     sa.Column('text', sa.Text(), nullable=False),
-    sa.Column('text_search', postgresql.TSVECTOR(), sa.Computed("to_tsvector('english', text)", persisted=True), nullable=True),
+    sa.Column(
+        'text_search',
+        postgresql.TSVECTOR(),
+        sa.Computed("to_tsvector('english', text)", persisted=True),
+        nullable=True,
+    ),
     sa.Column('confidence', sa.Numeric(precision=4, scale=3), nullable=True),
     sa.Column('speaker_label', sa.String(length=50), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default='now()', nullable=False),
     sa.ForeignKeyConstraint(['asset_id'], ['video_assets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index('ix_transcript_segments_asset_start', 'transcript_segments', ['asset_id', 'start_time'], unique=False)
-    op.create_index('ix_transcript_segments_text_search', 'transcript_segments', ['text_search'], unique=False, postgresql_using='gin')
+    op.create_index(
+        'ix_transcript_segments_asset_start',
+        'transcript_segments',
+        ['asset_id', 'start_time'],
+        unique=False,
+    )
+    op.create_index(
+        'ix_transcript_segments_text_search',
+        'transcript_segments',
+        ['text_search'],
+        unique=False,
+        postgresql_using='gin',
+    )
     op.create_table('video_summaries',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('asset_id', sa.UUID(), nullable=False),
@@ -108,7 +157,13 @@ def upgrade() -> None:
     sa.Column('job_id', sa.UUID(), nullable=False),
     sa.Column('step_name', sa.String(length=50), nullable=False),
     sa.Column('step_order', sa.SmallInteger(), nullable=False),
-    sa.Column('status', sa.Enum('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'SKIPPED', name='stepstatus'), nullable=False),
+    sa.Column(
+        'status',
+        sa.Enum(
+            'PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'SKIPPED', name='stepstatus'
+        ),
+        nullable=False,
+    ),
     sa.Column('attempts', sa.SmallInteger(), nullable=False),
     sa.Column('max_attempts', sa.SmallInteger(), nullable=False),
     sa.Column('error_message', sa.Text(), nullable=True),
@@ -120,7 +175,12 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('job_id', 'step_name')
     )
-    op.create_index('ix_job_steps_job_id_step_order', 'job_steps', ['job_id', 'step_order'], unique=True)
+    op.create_index(
+        'ix_job_steps_job_id_step_order',
+        'job_steps',
+        ['job_id', 'step_order'],
+        unique=True,
+    )
     # ### end Alembic commands ###
 
 
@@ -129,7 +189,11 @@ def downgrade() -> None:
     op.drop_index('ix_job_steps_job_id_step_order', table_name='job_steps')
     op.drop_table('job_steps')
     op.drop_table('video_summaries')
-    op.drop_index('ix_transcript_segments_text_search', table_name='transcript_segments', postgresql_using='gin')
+    op.drop_index(
+        'ix_transcript_segments_text_search',
+        table_name='transcript_segments',
+        postgresql_using='gin',
+    )
     op.drop_index('ix_transcript_segments_asset_start', table_name='transcript_segments')
     op.drop_table('transcript_segments')
     op.drop_index(op.f('ix_processing_jobs_asset_id'), table_name='processing_jobs')
