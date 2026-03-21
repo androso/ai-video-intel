@@ -25,7 +25,11 @@ dev = [
   "pytest>=8.4.1,<9.0.0",
   "pytest-asyncio>=1.1.0,<2.0.0",
   "mypy>=1.17.1,<2.0.0",
+  "pydantic[mypy]>=2.12.5",
 ]
 
 [tool.uv]
 default-groups = ["dev"]
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
