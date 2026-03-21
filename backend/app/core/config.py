@@ -5,6 +5,6 @@ class Settings(BaseSettings):
     REDIS_URL: str
     APP_ENV: str
 
-    model_config = { "env_file": ".env"}
+    model_config = { "env_file": "../.env"}
 
 settings = Settings()
