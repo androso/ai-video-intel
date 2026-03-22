@@ -33,3 +33,7 @@ default-groups = ["dev"]
 
 [tool.mypy]
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["app.integrations.storage"]
+disable_error_code = ["import-untyped"]
