@@ -1,10 +1,11 @@
-from fastapi import APIRouter, UploadFile, Depends, HTTPException
-from app.db.session import get_db
-from app.schemas.assets import UploadResponse, ErrorResponse
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.orm import Session
-from app.services.validation import ValidationError, validate_upload
+
+from app.db.session import get_db
 from app.integrations.storage import store_file
+from app.schemas.assets import ErrorResponse, UploadResponse
 from app.services.assets import create_asset_with_job
+from app.services.validation import ValidationError, validate_upload
 from app.workers.tasks import process_video
 
 router = APIRouter(prefix="/assets", tags=["assets"])
