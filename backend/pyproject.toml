@@ -37,3 +37,7 @@ plugins = ["pydantic.mypy"]
 [[tool.mypy.overrides]]
 module = ["app.integrations.storage"]
 disable_error_code = ["import-untyped"]
+
+[[tool.mypy.overrides]]
+module = ["app.workers.celery_app"]
+disable_error_code = ["import-untyped"]

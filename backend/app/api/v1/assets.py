@@ -34,7 +34,7 @@ async def upload_video(file: UploadFile, db: Session = db_dependency):
 
     asset, job = create_asset_with_job(
         db,
-        filename,
+        filename=filename,
         storage_path=storage_path,
         mime_type=mime_type,
         file_size_bytes=len(contents),
