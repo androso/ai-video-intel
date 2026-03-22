@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.services.validation import ValidationError, validate_upload
 from app.integrations.storage import store_file
 from app.services.assets import create_asset_with_job
+from app.workers.tasks import process_video
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 
@@ -37,7 +38,7 @@ async def upload_video(file: UploadFile, db: Session = Depends(get_db)):
         file_size_bytes=len(contents),
     )
 
-    # TODO: trigger celery task here
+    process_video.delay(str(asset.id), str(job.id))
 
     return UploadResponse(
         asset_id=asset.id, job_id=job.id, status=asset.status, filename=asset.filename
