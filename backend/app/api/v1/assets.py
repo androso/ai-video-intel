@@ -9,6 +9,7 @@ from app.services.validation import ValidationError, validate_upload
 from app.workers.tasks import process_video
 
 router = APIRouter(prefix="/assets", tags=["assets"])
+db_dependency = Depends(get_db)
 
 
 @router.post(
@@ -17,13 +18,13 @@ router = APIRouter(prefix="/assets", tags=["assets"])
     status_code=201,
     responses={400: {"model": ErrorResponse}},
 )
-async def upload_video(file: UploadFile, db: Session = Depends(get_db)):
+async def upload_video(file: UploadFile, db: Session = db_dependency):
     """Handle the upload of a video file and start a processing job"""
 
     try:
         contents = await validate_upload(file)
     except ValidationError as e:
-        raise HTTPException(status_code=400, detail=e.detail)
+        raise HTTPException(status_code=400, detail=e.detail) from e
 
     filename = file.filename or "Unknown"
     mime_type = file.content_type or "application/octet-stream"
