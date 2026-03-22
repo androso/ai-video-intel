@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from app.models.models import JobStep, VideoAsset, ProcessingJob
+
 from app.models.enums import AssetStatus, JobStatus, StepStatus
+from app.models.models import JobStep, ProcessingJob, VideoAsset
 
 # Ordered pipeline stages
 PIPELINE_STEPS = [
