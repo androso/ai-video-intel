@@ -2,6 +2,7 @@ from fastapi import UploadFile
 
 from app.core.config import settings
 
+
 class ValidationError(Exception):
     def __init__(self, detail: str) -> None:
         self.detail = detail

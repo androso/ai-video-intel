@@ -1,7 +1,9 @@
 import uuid
-from google.cloud import storage as gcs
-from app.core.config import settings
 from pathlib import Path
+
+from google.cloud import storage as gcs
+
+from app.core.config import settings
 
 
 def _generate_path(filename: str) -> str:
@@ -28,7 +30,8 @@ def upload_to_local(file_bytes: bytes, destination: str) -> str:
 
 
 def store_file(file_bytes: bytes, filename: str, content_type: str) -> str:
-    """Helper to store a file, tries to use gcs but fallsback to localstorage. Returns storage path"""
+    """Helper to store a file, tries to use gcs but fallsback to localstorage.
+       Returns storage path"""
     destination = _generate_path(filename)
     if settings.use_local_storage:
         return upload_to_local(file_bytes, destination)
