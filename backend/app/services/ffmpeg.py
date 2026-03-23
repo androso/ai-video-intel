@@ -1,11 +1,12 @@
-import logging
-from dataclasses import dataclass
-import subprocess
 import json
+import logging
+import subprocess
+from dataclasses import dataclass
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class FFmpegError(Exception):
@@ -111,7 +112,7 @@ def probe_media(input_path: str) -> MediaInfo:
         "json",
         "-show_format",
         "-show_streams",
-        input_path
+        input_path,
     ]
     result = _run(cmd)
 
