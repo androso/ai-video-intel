@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings
 
-
 class Settings(BaseSettings):
     DATABASE_URL: str
     REDIS_URL: str
@@ -26,6 +25,13 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = ""
 
     LOCAL_STORAGE_DIR: str = "storage"
+
+    # ffmpeg
+    FFMPEG_TIMEOUT_SECONDS: int = 600
+    NORMALIZED_VIDEO_PRESET: str = "medium"
+    NORMALIZED_VIDEO_CRF: int = 23
+    NORMALIZED_AUDIO_BITRATE: str = "128k"
+    THUMBNAIL_QUALITY: int = 2
 
     @property
     def max_upload_size_bytes(self) -> int:
