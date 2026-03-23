@@ -1,6 +1,8 @@
 from unittest.mock import AsyncMock
+
 import pytest
-from app.services.validation import validate_upload, ValidationError
+
+from app.services.validation import ValidationError, validate_upload
 
 
 def _fake_upload(
