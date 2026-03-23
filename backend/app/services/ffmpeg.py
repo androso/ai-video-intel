@@ -111,6 +111,7 @@ def probe_media(input_path: str) -> MediaInfo:
         "json",
         "-show_format",
         "-show_streams",
+        input_path
     ]
     result = _run(cmd)
 
@@ -216,7 +217,7 @@ def generate_thumbnail(
         "ffmpeg",
         "-y",
         "-ss",
-        "f{timestamp:.3f}",
+        f"{timestamp:.3f}",
         "-i",
         input_path,
         "-vframes",
