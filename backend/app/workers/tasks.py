@@ -59,7 +59,7 @@ def process_video(self, asset_id: str, job_id: str) -> dict:
         logger.info("Pipeline complete for asset=%s job=%s", asset_id, job_id)
         return {"asset_id": asset_id, "job_id": job_id, "status": "completed"}
 
-    except Exception:
+    except Exception as exc:
         logger.exception("Unhandled error in pipeline for asset=%s job=%s", asset_id, job_id)
         try:
             if "job" in locals() and job is not None:
@@ -70,6 +70,6 @@ def process_video(self, asset_id: str, job_id: str) -> dict:
             db.commit()
         except Exception:
             logger.exception("Failed to persist failure state for asset=%s job=%s", asset_id, job_id)
-        raise
+        raise self.retry(exc=exc, countdown=60)
     finally:
         db.close()

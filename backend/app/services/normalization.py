@@ -70,7 +70,6 @@ def execute_normalization(
         asset.thumbnail_path = thumbnail_path
         asset.duration_seconds = media_info.duration_seconds
         asset.technical_metadata = media_info.to_dict()
-        db.commit()
 
         logger.info("Normalization complete for asset %s in job %s", asset.id, job.id)
 

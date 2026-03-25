@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import (
     BigInteger,
@@ -49,7 +49,7 @@ class VideoAsset(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default="now()",
-        onupdate=datetime.now,
+        onupdate=lambda: datetime.now(timezone.utc),
     )
 
     processing_jobs: Mapped[list["ProcessingJob"]] = relationship(
@@ -91,7 +91,7 @@ class ProcessingJob(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default="now()",
-        onupdate=datetime.now,
+        onupdate=lambda: datetime.now(timezone.utc),
     )
 
     asset: Mapped["VideoAsset"] = relationship(back_populates="processing_jobs")
@@ -205,7 +205,7 @@ class VideoSummary(Base):
         DateTime(timezone=True), nullable=False, server_default="now()"
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default="now()", onupdate=datetime.now
+        DateTime(timezone=True), nullable=False, server_default="now()", onupdate=lambda: datetime.now(timezone.utc)
     )
 
     asset: Mapped["VideoAsset"] = relationship(back_populates="summary")

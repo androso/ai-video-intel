@@ -50,7 +50,7 @@ class MediaInfo:
     @property
     def is_already_normalized(self) -> bool:
         """Return true if the file is already H.264 + AAC in an mp4 container"""
-        video_ok = self.video_codec in ("h264", "libx264")
+        video_ok = self.video_codec == "h264"
         audio_ok = self.audio_codec in ("aac", None)
         container_ok = "mp4" in self.file_format.lower()
         return video_ok and audio_ok and container_ok
