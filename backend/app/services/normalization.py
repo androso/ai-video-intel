@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 import tempfile
 
 from sqlalchemy.orm import Session
@@ -33,18 +34,22 @@ def execute_normalization(
         if local_input != asset.original_storage_path:
             downloaded_path = local_input
 
-        # 2. Probe
-        media_info = probe_media(local_input)
+        # 2. Probe original to drive thumbnail timestamp fallback
+        source_media_info = probe_media(local_input)
 
         # 3. Transcode
         normalized_filename = f"{asset.id}_normalized.mp4"
         local_normalized = os.path.join(tmp_dir, normalized_filename)
-        transcode_to_standard(local_input, local_normalized, media_info)
+        transcode_to_standard(local_input, local_normalized, source_media_info)
+
+        # Probe normalized output so persisted metadata reflects canonical media.
+        media_info = probe_media(local_normalized)
 
         # 4. Thumbnail at 25% of duration (fall back to 0 for very short videos)
         thumb_filename = f"{asset.id}_thumb.jpg"
         local_thumb = os.path.join(tmp_dir, thumb_filename)
-        thumb_ts = media_info.duration_seconds * 0.25 if media_info.duration_seconds > 1 else 0.0
+        duration_for_thumb = media_info.duration_seconds or source_media_info.duration_seconds
+        thumb_ts = duration_for_thumb * 0.25 if duration_for_thumb > 1 else 0.0
         generate_thumbnail(local_normalized, local_thumb, timestamp=thumb_ts)
 
         # 5. Upload results
@@ -67,15 +72,11 @@ def execute_normalization(
         asset.technical_metadata = media_info.to_dict()
         db.commit()
 
-        logger.info("Normalization complete for asset %s", asset.id)
+        logger.info("Normalization complete for asset %s in job %s", asset.id, job.id)
 
     finally:
-        # Cleanup temp files
-        for path in [
-            os.path.join(tmp_dir, f) for f in os.listdir(tmp_dir)
-        ]:
-            _safe_remove(path)
-        _safe_remove(tmp_dir, is_dir=True)
+        # Cleanup temp workspace regardless of success/failure.
+        _safe_rmtree(tmp_dir)
         if downloaded_path:
             _safe_remove(downloaded_path)
 
@@ -89,3 +90,11 @@ def _safe_remove(path: str, is_dir: bool = False) -> None:
             os.remove(path)
     except OSError:
         logger.debug("Could not remove temp path: %s", path)
+
+
+def _safe_rmtree(path: str) -> None:
+    """Recursively remove a temp directory, logging but not raising on failure."""
+    try:
+        shutil.rmtree(path, ignore_errors=True)
+    except OSError:
+        logger.debug("Could not remove temp directory: %s", path)

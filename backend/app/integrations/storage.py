@@ -1,3 +1,4 @@
+import os
 import tempfile
 import uuid
 from pathlib import Path
@@ -55,9 +56,19 @@ def download_file(storage_path: str) -> str:
         bucket = client.bucket(bucket_name)
         blob = bucket.blob(blob_name)
         suffix = Path(blob_name).suffix or ".bin"
-        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-        blob.download_to_filename(tmp.name)
-        return tmp.name
+        fd, tmp_path = tempfile.mkstemp(suffix=suffix)
+        # The file descriptor from mkstemp must be closed before ffmpeg reads it.
+        # This avoids leaks and cross-platform locking issues.
+        try:
+            os.close(fd)
+            blob.download_to_filename(tmp_path)
+            return tmp_path
+        except Exception:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
 
     # Local storage — the path is already on disk
     return storage_path
