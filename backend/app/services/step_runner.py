@@ -25,6 +25,7 @@ def run_step(
     step = (
         db.query(JobStep)
         .filter(JobStep.job_id == job_id, JobStep.step_name == step_name)
+        .with_for_update()
         .one()
     )
 

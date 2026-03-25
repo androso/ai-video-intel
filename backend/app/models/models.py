@@ -36,7 +36,7 @@ class VideoAsset(Base):
     normalized_storage_path: Mapped[str | None] = mapped_column(String(1000))
     thumbnail_path: Mapped[str | None] = mapped_column(String(1000))
     status: Mapped[AssetStatus] = mapped_column(
-        nullable=False, default=AssetStatus.UPLOADED
+        nullable=False, default=AssetStatus.UPLOADED, index=True
     )
     mime_type: Mapped[str] = mapped_column(String(100), nullable=False)
     file_size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
