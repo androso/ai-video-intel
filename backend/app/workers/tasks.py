@@ -62,14 +62,21 @@ def process_video(self, asset_id: str, job_id: str) -> dict:
     except Exception as exc:
         logger.exception("Unhandled error in pipeline for asset=%s job=%s", asset_id, job_id)
         try:
-            if "job" in locals() and job is not None:
-                job.status = JobStatus.FAILED
-                job.completed_at = datetime.now(timezone.utc)
-            if "asset" in locals() and asset is not None:
-                asset.status = AssetStatus.FAILED
-            db.commit()
-        except Exception:
-            logger.exception("Failed to persist failure state for asset=%s job=%s", asset_id, job_id)
-        raise self.retry(exc=exc, countdown=60)
+            self.retry(exc=exc, countdown=60)
+        except self.MaxRetriesExceededError:
+            # Retries exhausted — now persist terminal failure
+            try:
+                if "job" in locals() and job is not None:
+                    job.status = JobStatus.FAILED
+                    job.completed_at = datetime.now(timezone.utc)
+                if "asset" in locals() and asset is not None:
+                    asset.status = AssetStatus.FAILED
+                db.commit()
+            except Exception:
+                logger.exception(
+                    "Failed to persist failure state for asset=%s job=%s",
+                    asset_id, job_id,
+                )
+            raise
     finally:
         db.close()
