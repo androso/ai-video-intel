@@ -23,6 +23,13 @@ class StepStatus(enum.StrEnum):
     SKIPPED = "skipped"
 
 
+class StepName(enum.StrEnum):
+    NORMALIZATION = "normalization"
+    AUDIO_EXTRACTION = "audio_extraction"
+    TRANSCRIPTION = "transcription"
+    AI_ENRICHMENT = "ai_enrichment"
+
+
 class InsightType(enum.StrEnum):
     SENTIMENT = "sentiment"
     TOPIC = "topic"

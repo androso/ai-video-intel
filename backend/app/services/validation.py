@@ -6,6 +6,7 @@ from app.core.config import settings
 class ValidationError(Exception):
     def __init__(self, detail: str) -> None:
         self.detail = detail
+        super().__init__(detail)
 
 async def validate_upload(file: UploadFile) -> bytes:
     """Validate mime type and file size. Returns the raw bytes if valid."""

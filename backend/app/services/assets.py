@@ -1,14 +1,14 @@
 from sqlalchemy.orm import Session
 
-from app.models.enums import AssetStatus, JobStatus, StepStatus
+from app.models.enums import AssetStatus, JobStatus, StepName, StepStatus
 from app.models.models import JobStep, ProcessingJob, VideoAsset
 
 # Ordered pipeline stages
 PIPELINE_STEPS = [
-    (1, "normalization"),
-    (2, "audio_extraction"),
-    (3, "transcription"),
-    (4, "ai_enrichment"),
+    (1, StepName.NORMALIZATION),
+    (2, StepName.AUDIO_EXTRACTION),
+    (3, StepName.TRANSCRIPTION),
+    (4, StepName.AI_ENRICHMENT),
 ]
 
 

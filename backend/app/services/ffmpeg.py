@@ -121,7 +121,7 @@ def probe_media(input_path: str) -> MediaInfo:
     except json.JSONDecodeError as exc:
         raise FFmpegError(f"Could not parse ffprobe output for {input_path}") from exc
 
-    streams: list[dict] = data.get("streams", {})
+    streams: list[dict] = data.get("streams", [])
     fmt: dict = data.get("format", {})
 
     video = _find_stream(streams, "video")
@@ -202,7 +202,7 @@ def transcode_to_standard(
         ]
 
     _run(cmd)
-    logger.info("Transcode complete -> %s", input_path)
+    logger.info("Transcode complete -> %s", output_path)
 
 
 def generate_thumbnail(
